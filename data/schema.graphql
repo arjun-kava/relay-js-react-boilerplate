@@ -115,6 +115,12 @@ type RenameTodoPayload {
   clientMutationId: String
 }
 
+type Subscription {
+  todoAdded: TodoEdge
+  todoUpdated: TodoEdge
+  todoRemoved: TodoEdge
+}
+
 type Todo implements Node {
   """The ID of an object"""
   id: ID!

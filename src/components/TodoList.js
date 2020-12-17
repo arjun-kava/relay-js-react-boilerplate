@@ -1,14 +1,20 @@
 import MarkAllTodosMutation from "../mutations/MarkAllTodosMutation";
 import Todo from "./Todo";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { createFragmentContainer, graphql } from "react-relay";
+import TodoAddedSubscription from "../subscriptions/TodoAddedSubscription";
 
 const TodoList = ({
   relay,
   user,
   user: { todos, totalCount, completedCount },
 }) => {
+  useEffect(() => {
+    TodoAddedSubscription.request(relay.environment, user);
+    return {};
+  });
+
   const handleMarkAllChange = (e) => {
     const complete = e.currentTarget.checked;
 

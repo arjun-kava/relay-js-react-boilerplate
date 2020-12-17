@@ -73,7 +73,7 @@ body {
   font-size: 100px;
   font-weight: 100;
   text-align: center;
-  color: rgba(175, 47, 47, 0.15);
+  color: #fed834;
   -webkit-text-rendering: optimizeLegibility;
   -moz-text-rendering: optimizeLegibility;
   text-rendering: optimizeLegibility;
@@ -214,13 +214,13 @@ label[for="toggle-all"] {
   height: 40px;
   margin: auto 0;
   font-size: 30px;
-  color: #cc9a9a;
+  color: #fed834;
   margin-bottom: 11px;
   transition: color 0.2s ease-out;
 }
 
 .todo-list li .destroy:hover {
-  color: #af5b5e;
+  color: #fed834;
 }
 
 .todo-list li .destroy:after {

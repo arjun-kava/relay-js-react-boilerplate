@@ -27,7 +27,7 @@ const TodoApp = ({ relay, user }) => {
           />
         </header>
 
-        <TodoList user={user} />
+        <TodoList user={user} relay={relay} />
         {hasTodos && <TodoListFooter user={user} />}
       </section>
 
@@ -36,11 +36,7 @@ const TodoApp = ({ relay, user }) => {
 
         <p>
           Created by the{" "}
-          <a href="https://facebook.github.io/relay/">Relay team</a>
-        </p>
-
-        <p>
-          Part of <a href="http://todomvc.com">TodoMVC</a>
+          <a href="https://www.linkedin.com/in/arjun-kava/">Arjun Kava</a>
         </p>
       </footer>
     </div>

@@ -25,7 +25,22 @@ const mutation = graphql`
 function sharedUpdater(store, user, newEdge) {
   const userProxy = store.get(user.id);
   const conn = ConnectionHandler.getConnection(userProxy, "TodoList_todos");
-  ConnectionHandler.insertEdgeAfter(conn, newEdge);
+  if (conn) {
+    // Check record already exists
+    const todo = newEdge.getLinkedRecord("node");
+    const todoId = todo.getValue("id");
+
+    // Check record already exists
+    const existingRecords = conn.getLinkedRecords("edges");
+    const recordAlreadyExists = existingRecords.some((existingRecord) => {
+      const node = existingRecord.getLinkedRecord("node");
+      const existingId = node.getValue("id");
+      return existingId === todoId;
+    });
+    if (!recordAlreadyExists) {
+      ConnectionHandler.insertEdgeAfter(conn, newEdge);
+    }
+  }
 }
 
 let tempID = 0;

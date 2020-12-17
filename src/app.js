@@ -2,12 +2,18 @@ import * as React from "react";
 import ReactDOM from "react-dom";
 
 import { QueryRenderer, graphql } from "react-relay";
-import { Environment, Network, RecordSource, Store } from "relay-runtime";
+import {
+  Environment,
+  Network,
+  Observable,
+  RecordSource,
+  Store,
+} from "relay-runtime";
+import { SubscriptionClient } from "subscriptions-transport-ws";
 
 import TodoApp from "./components/TodoApp";
-const GraphQLURL = process.env.GRAPHQL_SERVER_URL;
 async function fetchQuery(operation, variables) {
-  const response = await fetch(GraphQLURL, {
+  const response = await fetch(`${process.env.GRAPHQL_HTTP_SERVER_URL}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -21,8 +27,25 @@ async function fetchQuery(operation, variables) {
   return response.json();
 }
 
+const subscriptionClient = new SubscriptionClient(
+  `${process.env.GRAPHQL_SOCKET_SERVER_URL}`,
+  {
+    reconnect: true,
+  }
+);
+
+const subscribe = (request, variables) => {
+  const subscribeObservable = subscriptionClient.request({
+    query: request.text,
+    operationName: request.name,
+    variables,
+  });
+  // Important: Convert subscriptions-transport-ws observable type to Relay's
+  return Observable.from(subscribeObservable);
+};
+
 const modernEnvironment = new Environment({
-  network: Network.create(fetchQuery),
+  network: Network.create(fetchQuery, subscribe),
   store: new Store(new RecordSource()),
 });
 

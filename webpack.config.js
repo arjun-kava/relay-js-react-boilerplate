@@ -1,5 +1,5 @@
 const webpack = require("webpack");
-var dotenv = require("dotenv").config({ path: __dirname + "/.env" });
+const Dotenv = require("dotenv-webpack");
 
 module.exports = {
   entry: ["./src/app"],
@@ -24,6 +24,11 @@ module.exports = {
         use: ["babel-loader"],
       },
       { test: /\.css$/, use: ["style-loader", "css-loader"] },
+      {
+        test: /\.js$/,
+        enforce: "pre",
+        use: ["source-map-loader"],
+      },
     ],
   },
 
@@ -31,13 +36,11 @@ module.exports = {
     extensions: ["*", ".js", ".jsx"],
   },
 
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.EnvironmentPlugin(Object.keys(dotenv.parsed || {})),
-  ],
+  plugins: [new webpack.HotModuleReplacementPlugin(), new Dotenv()],
 
   devServer: {
     contentBase: "./public",
     hot: true,
+    publicPath: "/dist",
   },
 };
