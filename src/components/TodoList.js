@@ -3,7 +3,6 @@ import Todo from "./Todo";
 
 import React, { useEffect } from "react";
 import { createFragmentContainer, graphql } from "react-relay";
-import TodoAddedSubscription from "../subscriptions/TodoAddedSubscription";
 
 const TodoList = ({
   relay,
@@ -11,9 +10,8 @@ const TodoList = ({
   user: { todos, totalCount, completedCount },
 }) => {
   useEffect(() => {
-    TodoAddedSubscription.request(relay.environment, user);
     return {};
-  });
+  }, []);
 
   const handleMarkAllChange = (e) => {
     const complete = e.currentTarget.checked;

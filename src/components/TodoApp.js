@@ -3,10 +3,20 @@ import TodoList from "./TodoList";
 import TodoListFooter from "./TodoListFooter";
 import TodoTextInput from "./TodoTextInput";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { createFragmentContainer, graphql } from "react-relay";
+import TodoUpdatedSubscription from "../subscriptions/TodoUpdatedSubscription";
+import TodoRemovedSubscription from "../subscriptions/TodoRemovedSubscription";
+import TodoAddedSubscription from "../subscriptions/TodoAddedSubscription";
 
 const TodoApp = ({ relay, user }) => {
+  useEffect(() => {
+    TodoAddedSubscription.request(relay.environment, user);
+    TodoUpdatedSubscription.request(relay.environment, user);
+    TodoRemovedSubscription.request(relay.environment, user);
+    return {};
+  }, []);
+
   const handleTextInputSave = (text) => {
     AddTodoMutation.commit(relay.environment, text, user);
     return;

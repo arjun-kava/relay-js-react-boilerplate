@@ -22,34 +22,41 @@ const mutation = graphql`
   }
 `;
 
-function sharedUpdater(store, user, newEdge) {
+function sharedUpdater(store, user, todoEdge) {
   const userProxy = store.get(user.id);
-  const conn = ConnectionHandler.getConnection(userProxy, "TodoList_todos");
-  if (conn) {
-    // Check record already exists
-    const todo = newEdge.getLinkedRecord("node");
+  const connection = ConnectionHandler.getConnection(
+    userProxy,
+    "TodoList_todos"
+  );
+  if (connection) {
+    const todo = todoEdge.getLinkedRecord("node");
+    const cursor = todoEdge.getValue("cursor");
     const todoId = todo.getValue("id");
 
     // Check record already exists
-    const existingRecords = conn.getLinkedRecords("edges");
+    const existingRecords = connection.getLinkedRecords("edges");
     const recordAlreadyExists = existingRecords.some((existingRecord) => {
       const node = existingRecord.getLinkedRecord("node");
       const existingId = node.getValue("id");
       return existingId === todoId;
     });
+
     if (!recordAlreadyExists) {
-      ConnectionHandler.insertEdgeAfter(conn, newEdge);
+      const edge = ConnectionHandler.createEdge(store, connection, todo);
+      ConnectionHandler.insertEdgeAfter(connection, edge, cursor);
+      const numTodos = userProxy.getValue("totalCount");
+      if (numTodos != null) {
+        userProxy.setValue(numTodos + 1, "totalCount");
+      }
     }
   }
 }
-
-let tempID = 0;
 
 function commit(environment, text, user) {
   const input = {
     text,
     userId: user.userId,
-    clientMutationId: `${tempID++}`,
+    clientMutationId: `${Date.now()}`,
   };
 
   return commitMutation(environment, {
@@ -59,35 +66,18 @@ function commit(environment, text, user) {
     },
     updater: (store) => {
       const payload = store.getRootField("addTodo");
-      const newEdge = payload.getLinkedRecord("todoEdge");
-      sharedUpdater(store, user, newEdge);
+      const todoEdge = payload.getLinkedRecord("todoEdge");
+      sharedUpdater(store, user, todoEdge);
     },
     optimisticUpdater: (store) => {
-      const id = "client:newTodo:" + tempID++;
+      const id = "client:newTodo:" + Date.now();
       const node = store.create(id, "Todo");
       node.setValue(text, "text");
       node.setValue(id, "id");
 
-      const newEdge = store.create("client:newEdge:" + tempID++, "TodoEdge");
-      newEdge.setLinkedRecord(node, "node");
-      sharedUpdater(store, user, newEdge);
-
-      // Get the UserProxy, and update the totalCount
-      const userProxy = store.get(user.id);
-
-      if (!userProxy) {
-        throw new Error("Failed to retrieve userProxy from store");
-      }
-
-      const totalCount = userProxy.getValue("totalCount");
-
-      if (typeof totalCount !== "number") {
-        throw new Error(
-          `Expected userProxy.totalCount to be number, but got: ${typeof totalCount}`
-        );
-      }
-
-      userProxy.setValue(totalCount + 1, "totalCount");
+      const todoEdge = store.create("client:newEdge:" + Date.now(), "TodoEdge");
+      todoEdge.setLinkedRecord(node, "node");
+      sharedUpdater(store, user, todoEdge);
     },
   });
 }

@@ -16,21 +16,31 @@ const subscription = graphql`
 
 function sharedUpdater(store, user, todoEdge) {
   const userProxy = store.get(user.id);
-  const conn = ConnectionHandler.getConnection(userProxy, "TodoList_todos");
-  if (conn) {
+  const connection = ConnectionHandler.getConnection(
+    userProxy,
+    "TodoList_todos"
+  );
+  if (connection) {
     // Check record already exists
     const todo = todoEdge.getLinkedRecord("node");
+    const cursor = todoEdge.getValue("cursor");
     const todoId = todo.getValue("id");
 
     // Check record already exists
-    const existingRecords = conn.getLinkedRecords("edges");
+    const existingRecords = connection.getLinkedRecords("edges");
     const recordAlreadyExists = existingRecords.some((existingRecord) => {
       const node = existingRecord.getLinkedRecord("node");
       const existingId = node.getValue("id");
       return existingId === todoId;
     });
+
     if (!recordAlreadyExists) {
-      ConnectionHandler.insertEdgeAfter(conn, todoEdge);
+      const edge = ConnectionHandler.createEdge(store, connection, todo);
+      ConnectionHandler.insertEdgeAfter(connection, edge, cursor);
+      const numTodos = userProxy.getValue("totalCount");
+      if (numTodos != null) {
+        userProxy.setValue(numTodos + 1, "totalCount");
+      }
     }
   }
 }
