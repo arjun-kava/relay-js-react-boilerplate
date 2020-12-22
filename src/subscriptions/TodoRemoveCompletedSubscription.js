@@ -26,9 +26,7 @@ function request(enviroment, user) {
       variables: {},
       updater: (store) => {
         const payload = store.getRootField("todoRemoveCompleted");
-        console.log({ payload });
         const deletedIds = payload.getValue("deletedTodoIds");
-        console.log({ deletedIds });
         sharedUpdater(store, user, deletedIds);
       },
       onError: (error) => {
