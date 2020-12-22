@@ -10,8 +10,10 @@ const subscription = graphql`
   }
 `;
 
-function sharedUpdater(store, user, deletedId) {
+function sharedUpdater(store, user, todo) {
   const userProxy = store.get(user.id);
+  const deletedId = todo.getValue("id");
+  const complete = todo.getValue("complete");
   const connection = ConnectionHandler.getConnection(
     userProxy,
     "TodoList_todos"
@@ -21,6 +23,10 @@ function sharedUpdater(store, user, deletedId) {
     const numTodos = userProxy.getValue("totalCount");
     if (numTodos != null) {
       userProxy.setValue(numTodos - 1, "totalCount");
+      if (complete) {
+        const completedTodos = userProxy.getValue("completedCount");
+        userProxy.setValue(completedTodos - 1, "completedCount");
+      }
     }
   }
 }
@@ -30,9 +36,9 @@ function request(enviroment, user) {
     subscription: subscription,
     variables: {},
     updater: (store) => {
-      const payload = store.getRootField("todoRemoved");
-      const deletedId = payload.getValue("id");
-      sharedUpdater(store, user, deletedId);
+      const todo = store.getRootField("todoRemoved");
+
+      sharedUpdater(store, user, todo);
     },
     onError: (error) => {
       throw new Error(error);

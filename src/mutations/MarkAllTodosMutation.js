@@ -1,4 +1,5 @@
 import { commitMutation, graphql } from "react-relay";
+import { ConnectionHandler } from "relay-runtime";
 
 const mutation = graphql`
   mutation MarkAllTodosMutation($input: MarkAllTodosInput!) {
@@ -30,8 +31,7 @@ function getOptimisticResponse(complete, todos, user) {
       complete: complete,
       id: node.id,
     }));
-
-  return {
+  const payload = {
     markAllTodos: {
       changedTodos,
       user: {
@@ -40,6 +40,7 @@ function getOptimisticResponse(complete, todos, user) {
       },
     },
   };
+  return payload;
 }
 
 function commit(environment, complete, todos, user) {
@@ -52,6 +53,26 @@ function commit(environment, complete, todos, user) {
     mutation,
     variables: {
       input,
+    },
+    updater(store) {
+      const userProxy = store.get(user.id);
+      const connection = ConnectionHandler.getConnection(
+        userProxy,
+        "TodoList_todos"
+      );
+      if (connection) {
+        const edges = connection.getLinkedRecords("edges");
+        edges.forEach((existingRecord) => {
+          const node = existingRecord.getLinkedRecord("node");
+          node.setValue(complete, "complete");
+        });
+        if (complete) {
+          const totalCount = userProxy.getValue("totalCount");
+          userProxy.setValue(totalCount, "completedCount");
+        } else {
+          userProxy.setValue(0, "completedCount");
+        }
+      }
     },
     optimisticResponse: getOptimisticResponse(complete, todos, user),
   });

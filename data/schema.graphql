@@ -119,6 +119,7 @@ type Subscription {
   todoAdded: TodoEdge
   todoUpdated: Todo
   todoRemoved: Todo
+  todoMarkAll: todoMarkAll
 }
 
 type Todo implements Node {
@@ -144,6 +145,10 @@ type TodoEdge {
 
   """A cursor for use in pagination"""
   cursor: String!
+}
+
+type todoMarkAll {
+  complete: Boolean
 }
 
 type User implements Node {

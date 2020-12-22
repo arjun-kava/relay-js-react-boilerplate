@@ -15,7 +15,7 @@ const TodoList = ({
 
   const handleMarkAllChange = (e) => {
     const complete = e.currentTarget.checked;
-
+    console.log("complete", complete);
     if (todos) {
       MarkAllTodosMutation.commit(relay.environment, complete, todos, user);
     }

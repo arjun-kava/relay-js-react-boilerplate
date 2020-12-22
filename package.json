@@ -11,7 +11,7 @@
     "webpack": "webpack --mode production",
     "watch": "npm run update-schema | npm run relay-compiler",
     "start": "webpack serve --mode development --env development",
-    "update-schema": "get-graphql-schema http://localhost:3000/graphql > schema.graphql"
+    "update-schema": "get-graphql-schema http://localhost:3000/graphql > ./data/schema.graphql"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.12.1",

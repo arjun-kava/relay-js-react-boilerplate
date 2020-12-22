@@ -8,9 +8,11 @@ import { createFragmentContainer, graphql } from "react-relay";
 import TodoUpdatedSubscription from "../subscriptions/TodoUpdatedSubscription";
 import TodoRemovedSubscription from "../subscriptions/TodoRemovedSubscription";
 import TodoAddedSubscription from "../subscriptions/TodoAddedSubscription";
+import TodoMarkAllSubscription from "../subscriptions/TodoMarkAllSubscription";
 
 const TodoApp = ({ relay, user }) => {
   useEffect(() => {
+    TodoMarkAllSubscription.request(relay.environment, user);
     TodoAddedSubscription.request(relay.environment, user);
     TodoUpdatedSubscription.request(relay.environment, user);
     TodoRemovedSubscription.request(relay.environment, user);
