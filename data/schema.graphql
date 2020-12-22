@@ -120,6 +120,7 @@ type Subscription {
   todoUpdated: Todo
   todoRemoved: Todo
   todoMarkAll: todoMarkAll
+  todoRemoveCompleted: todoRemoveCompleted
 }
 
 type Todo implements Node {
@@ -149,6 +150,10 @@ type TodoEdge {
 
 type todoMarkAll {
   complete: Boolean
+}
+
+type todoRemoveCompleted {
+  deletedTodoIds: [String!]
 }
 
 type User implements Node {

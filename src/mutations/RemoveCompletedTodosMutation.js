@@ -38,7 +38,6 @@ function commit(environment, todos, user) {
       const payload = store.getRootField("removeCompletedTodos");
       const deletedIds = payload.getValue("deletedTodoIds");
 
-      // $FlowFixMe `payload.getValue` returns mixed, not sure how to check refinement to $ReadOnlyArray<string>
       sharedUpdater(store, user, deletedIds);
     },
     optimisticUpdater: (store) => {

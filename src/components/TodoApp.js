@@ -9,9 +9,11 @@ import TodoUpdatedSubscription from "../subscriptions/TodoUpdatedSubscription";
 import TodoRemovedSubscription from "../subscriptions/TodoRemovedSubscription";
 import TodoAddedSubscription from "../subscriptions/TodoAddedSubscription";
 import TodoMarkAllSubscription from "../subscriptions/TodoMarkAllSubscription";
+import TodoRemoveCompletedSubscription from "../subscriptions/TodoRemoveCompletedSubscription";
 
 const TodoApp = ({ relay, user }) => {
   useEffect(() => {
+    TodoRemoveCompletedSubscription.request(relay.environment, user);
     TodoMarkAllSubscription.request(relay.environment, user);
     TodoAddedSubscription.request(relay.environment, user);
     TodoUpdatedSubscription.request(relay.environment, user);
