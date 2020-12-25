@@ -6,21 +6,10 @@ import { graphql, createFragmentContainer } from "react-relay";
 const TodoListFooter = ({
   relay,
   user,
-  user: { todos, completedCount, totalCount },
+  user: { completedCount, totalCount },
 }) => {
-  const completedEdges =
-    todos && todos.edges
-      ? todos.edges.filter((edge) => edge && edge.node && edge.node.complete)
-      : [];
-
   const handleRemoveCompletedTodosClick = () => {
-    RemoveCompletedTodosMutation.commit(
-      relay.environment,
-      {
-        edges: completedEdges,
-      },
-      user
-    );
+    RemoveCompletedTodosMutation.commit(relay.environment, user);
   };
 
   const numRemainingTodos = totalCount - completedCount;
@@ -50,16 +39,6 @@ export default createFragmentContainer(TodoListFooter, {
       id
       userId
       completedCount
-      todos(
-        first: 2147483647 # max GraphQLInt
-      ) @connection(key: "TodoList_todos") {
-        edges {
-          node {
-            id
-            complete
-          }
-        }
-      }
       totalCount
     }
   `,

@@ -24,7 +24,8 @@ function sharedUpdater(store, user, deletedIDs) {
   );
 }
 
-function commit(environment, todos, user) {
+function commit(environment, user) {
+  console.log({ user });
   const input = {
     userId: user.userId,
   };
@@ -39,19 +40,6 @@ function commit(environment, todos, user) {
       const deletedIds = payload.getValue("deletedTodoIds");
 
       sharedUpdater(store, user, deletedIds);
-    },
-    optimisticUpdater: (store) => {
-      // Relay returns Maybe types a lot of times in a connection that we need to cater for
-      const completedNodeIds = todos.edges
-        ? todos.edges
-            .filter(Boolean)
-            .map((edge) => edge.node)
-            .filter(Boolean)
-            .filter((node) => node.complete)
-            .map((node) => node.id)
-        : [];
-
-      sharedUpdater(store, user, completedNodeIds);
     },
   });
 }

@@ -32,7 +32,7 @@ const TodoApp = ({ relay, user }) => {
     <div>
       <section className="todoapp">
         <header className="header">
-          <h1>todos</h1>
+          <h1>zudos</h1>
 
           <TodoTextInput
             className="new-todo"
@@ -46,6 +46,7 @@ const TodoApp = ({ relay, user }) => {
       </section>
 
       <footer className="info">
+        <img src="images/favicon-32x32.png" />
         <p>Double-click to edit a todo</p>
 
         <p>

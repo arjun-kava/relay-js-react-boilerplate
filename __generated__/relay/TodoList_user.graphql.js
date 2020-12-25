@@ -48,13 +48,24 @@ var v0 = {
   "storageKey": null
 };
 return {
-  "argumentDefinitions": [],
+  "argumentDefinitions": [
+    {
+      "defaultValue": 2,
+      "kind": "LocalArgument",
+      "name": "count"
+    },
+    {
+      "defaultValue": null,
+      "kind": "LocalArgument",
+      "name": "cursor"
+    }
+  ],
   "kind": "Fragment",
   "metadata": {
     "connection": [
       {
-        "count": null,
-        "cursor": null,
+        "count": "count",
+        "cursor": "cursor",
         "direction": "forward",
         "path": [
           "todos"
@@ -182,6 +193,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '4c169798c328a2b4d9b4ae5227d016bb';
+(node/*: any*/).hash = '4d665c3806af34cd2729aaf1d9900afa';
 
 module.exports = node;
